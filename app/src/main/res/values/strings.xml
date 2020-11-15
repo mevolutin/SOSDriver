@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SOS Bicicletta Driver</string>
+    <!-- Firestore Strings -->
+    <string name="collection_users">Users</string>
+    <string name="collection_chatroom_user_list">User List</string>
+    <string name="collection_user_locations">User Locations</string>
+</resources>
