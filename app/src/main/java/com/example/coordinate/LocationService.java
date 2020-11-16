@@ -37,10 +37,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.core.Tag;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+
+import org.imperiumlabs.geofirestore.GeoFirestore;
 
 import java.security.Provider;
 
@@ -66,22 +69,47 @@ public class LocationService extends Service {
                 double longitude = locationResult.getLastLocation().getLongitude();
                 GeoPoint driver = new GeoPoint(latitude,longitude);
                 Log.d("LOCATION_UPDATE", String.valueOf(driver));
-///////////////////////////////////
-
-
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
 
                 String userId = FirebaseAuth.getInstance().getUid();
 
-
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
-
-
-
 
                 GeoFire geoFire = new GeoFire(ref);
                 geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );
 
+
                 // Read from the database
+                /*GeoFire mGeoFire = new GeoFire(ref);
+
+                mGeoFire.getLocation(userId, new com.firebase.geofire.LocationCallback() {
+                    @Override
+                    public void onLocationResult(String key, GeoLocation location) {
+                        if (location != null) {
+                            System.out.println(String.format("The location for key %s is [%f,%f]", key, location.latitude, location.longitude));
+                            Log.d("PINO", "onLocationResult: "+location);
+
+                        } else {
+                            System.out.println(String.format("There is no location for key %s in GeoFire", key));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        System.err.println("There was an error getting the GeoFire location: " + databaseError);
+                        Log.d("PINO", "onLocationResult: "+databaseError);
+
+
+                    }
+                });*/
+
+
+
+
+
+
+
+
 
                 //userLocation.setGeoPoint(driver);
                 //userLocation.setTimestamp(null);
@@ -95,6 +123,7 @@ public class LocationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
+
     }
 
 
