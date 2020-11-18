@@ -87,7 +87,7 @@ public class LocationService extends Service {
                 geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );
 
                 DataFirebase();
-
+//
                 // Read from the database
                 /*GeoFire mGeoFire = new GeoFire(ref);
 
