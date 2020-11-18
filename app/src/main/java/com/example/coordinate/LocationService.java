@@ -62,7 +62,7 @@ public class LocationService extends Service {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String Nome;
     String Telefono;
-    String
+    String UserId;
 
 
 
@@ -79,31 +79,14 @@ public class LocationService extends Service {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
 
                 String userId = FirebaseAuth.getInstance().getUid();
+                UserId = userId;
 
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
 
                 GeoFire geoFire = new GeoFire(ref);
                 geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );
 
-                DocumentReference docRef = db.collection("users").document(userId);
-                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                Nome = String.valueOf(document.get("Nome"));
-                                Telefono = String.valueOf(document.get("Telefono"));
-                                Log.d("document", "DocumentSnapshot data: " + Telefono);
-
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                });
+                DataFirebase();
 
                 // Read from the database
                 /*GeoFire mGeoFire = new GeoFire(ref);
@@ -210,7 +193,7 @@ public class LocationService extends Service {
     }
 
     private  void DataFirebase(){
-        DocumentReference docRef = db.collection("users").document(userId);
+        DocumentReference docRef = db.collection("users").document(UserId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
