@@ -45,8 +45,6 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.imperiumlabs.geofirestore.GeoFirestore;
-
 import java.security.Provider;
 
 import javax.annotation.Nullable;
@@ -55,7 +53,6 @@ import static android.content.ContentValues.TAG;
 
 public class LocationService extends Service {
 
-//ghfhgfhgfhjfg
     private FirebaseFirestore Db;
     private DocumentReference DRef;
     private static final String FIRE_LOG = "FireStoreEr";
@@ -63,7 +60,6 @@ public class LocationService extends Service {
     String Nome;
     String Telefono;
     String UserId;
-
 
 
 
@@ -87,7 +83,7 @@ public class LocationService extends Service {
                 geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );
 
                 DataFirebase();
-//
+
                 // Read from the database
                 /*GeoFire mGeoFire = new GeoFire(ref);
 
@@ -111,13 +107,6 @@ public class LocationService extends Service {
 
                     }
                 });*/
-
-
-
-
-
-
-
 
 
                 //userLocation.setGeoPoint(driver);
@@ -183,6 +172,7 @@ public class LocationService extends Service {
         LocationServices.getFusedLocationProviderClient(this)
                 .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         startForeground(Constants.LOCATION_SERVICE_ID,builder.build());
+
     }
 
     private void stopLocationService(){
@@ -213,8 +203,11 @@ public class LocationService extends Service {
             }
         });
 
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("DriverAvailable");
 
-
+        databaseReference.child(UserId).child("Nome").setValue(Nome);
+        databaseReference.child(UserId).child("Telefono").setValue(Telefono);
+        //da impedire il loop
     }
 
 
