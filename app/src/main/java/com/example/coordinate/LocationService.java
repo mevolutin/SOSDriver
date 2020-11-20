@@ -45,6 +45,8 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.imperiumlabs.geofirestore.GeoFirestore;
+
 import java.security.Provider;
 
 import javax.annotation.Nullable;
@@ -53,6 +55,7 @@ import static android.content.ContentValues.TAG;
 
 public class LocationService extends Service {
 
+//ghfhgfhgfhjfg
     private FirebaseFirestore Db;
     private DocumentReference DRef;
     private static final String FIRE_LOG = "FireStoreEr";
@@ -63,10 +66,14 @@ public class LocationService extends Service {
 
 
 
+
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
+
+
+
             if (locationResult != null && locationResult.getLastLocation() != null) {
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
@@ -78,11 +85,11 @@ public class LocationService extends Service {
                 UserId = userId;
 
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
-
+                DataFirebase();
                 GeoFire geoFire = new GeoFire(ref);
                 geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );
 
-                DataFirebase();
+
 
                 // Read from the database
                 /*GeoFire mGeoFire = new GeoFire(ref);
@@ -109,13 +116,11 @@ public class LocationService extends Service {
                 });*/
 
 
-                //userLocation.setGeoPoint(driver);
-                //userLocation.setTimestamp(null);
-                //saveUserLocation();
-
             }
         }
     };
+
+
 
     @Nullable
     @Override
@@ -172,7 +177,6 @@ public class LocationService extends Service {
         LocationServices.getFusedLocationProviderClient(this)
                 .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         startForeground(Constants.LOCATION_SERVICE_ID,builder.build());
-
     }
 
     private void stopLocationService(){
@@ -183,7 +187,9 @@ public class LocationService extends Service {
     }
 
     private  void DataFirebase(){
-        DocumentReference docRef = db.collection("users").document(UserId);
+        String userId = FirebaseAuth.getInstance().getUid();
+        DocumentReference docRef = db.collection("users").document(userId);
+
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -194,6 +200,8 @@ public class LocationService extends Service {
                         Telefono = String.valueOf(document.get("Telefono"));
                         Log.d("document", "DocumentSnapshot data: " + Telefono);
 
+
+
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -203,11 +211,14 @@ public class LocationService extends Service {
             }
         });
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("DriverAvailable");
 
-        databaseReference.child(UserId).child("Nome").setValue(Nome);
-        databaseReference.child(UserId).child("Telefono").setValue(Telefono);
-        //da impedire il loop
+        /*DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("DriverAvailable");
+        databaseReference.child(userId).child("Nome").setValue(Nome);
+        databaseReference.child(userId).child("Telefono").setValue(Telefono);
+        Log.d("Nomeee", "DataFirebase: "+Nome+Telefono);
+*/
+
+
     }
 
 
@@ -217,6 +228,7 @@ public class LocationService extends Service {
             String action = intent.getAction();
             if (action.equals(Constants.ACTION_START_LOCATION_SERVICE)){
                 startLocationService();
+
             }else if(action.equals(Constants.ACTION_STOP_LOCATION_SERVICE)){
                 stopLocationService();
             }

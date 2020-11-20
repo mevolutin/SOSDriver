@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -21,22 +22,34 @@ import com.firebase.geofire.GeoFire;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import static android.content.ContentValues.TAG;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     private Button mLogout;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String Nome;
+    String Telefono;
+    String UserId;
     private GoogleApiClient mGoogleApiClient;
+    String userId = FirebaseAuth.getInstance().getUid();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        DataFirebase();
         Switch sw = (Switch) findViewById(R.id.switch1);
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
@@ -50,16 +63,24 @@ public class MainActivity extends AppCompatActivity {
                             REQUEST_CODE_LOCATION_PERMISSION
                     );
                 } else {
+                    DataFirebase();
                     startLocationService();
+
+
+
 
                 }
             } else {
+
                 stopLocationService();
                 onStop();
             }
         });
+        Button button = (Button) findViewById(R.id.LogOut);
+        button.setOnClickListener(v -> {
+            DataFirebase();
 
-
+        });
 
 
     }
@@ -75,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
 
     private boolean isLocationServiceRunning() {
         ActivityManager activityManager =
@@ -93,6 +117,17 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    /*private void startDataService(){
+        Intent intent = new Intent(getApplicationContext(), LocationService.class);
+        intent.setAction(Constants.ACTION_START_DATAFIRE_SERVICE);
+        startService(intent);
+    }
+
+    private void  stopDataService(){
+        Intent intent = new Intent(getApplicationContext(), LocationService.class);
+        intent.setAction(Constants.ACTION_STOP_DATAFIRE_SERVICE);
+        startService(intent);
+    }*/
 
     private void startLocationService(){
         if (!isLocationServiceRunning()){
@@ -118,14 +153,48 @@ public class MainActivity extends AppCompatActivity {
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
+        DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("Driver");
 
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(userId);
+        ref1.removeValue();
+
         //FirebaseAuth.getInstance().signOut(); LOGOUT
     }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+
+    private  void DataFirebase(){
+        String userId = FirebaseAuth.getInstance().getUid();
+        DocumentReference docRef = db.collection("users").document(userId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Nome = String.valueOf(document.get("Nome"));
+                        Telefono = String.valueOf(document.get("Telefono"));
+                        Log.d("document", "DocumentSnapshot data: " + Telefono);
+
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Driver");
+        databaseReference.child(userId).child("Nome").setValue(Nome);
+        databaseReference.child(userId).child("Telefono").setValue(Telefono);
+
 
     }
 
