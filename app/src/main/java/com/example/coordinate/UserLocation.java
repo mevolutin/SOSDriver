@@ -5,50 +5,27 @@ import com.google.firebase.firestore.auth.User;
 
 
 public class UserLocation {
-    private GeoPoint geoPoint;
-    private @ServerTimestamp String timestamp;
-    private User user;
+    private double Longitude;
+    private double Latitude;
 
-    public UserLocation(GeoPoint geoPoint, String timestamp, User user) {
-        this.geoPoint = geoPoint;
-        this.timestamp = timestamp;
-        this.user = user;
+    public UserLocation(double longitude, double latitude) {
+        Longitude = longitude;
+        Latitude = latitude;
     }
 
-    public UserLocation() {
-
+    public double getLongitude() {
+        return Longitude;
     }
 
-    public GeoPoint getGeoPoint() {
-        return geoPoint;
+    public void setLongitude(double longitude) {
+        Longitude = longitude;
     }
 
-    public void setGeoPoint(GeoPoint geoPoint) {
-        this.geoPoint = geoPoint;
+    public double getLatitude() {
+        return Latitude;
     }
 
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public String toString() {
-        return "UserLocation{" +
-                "geoPoint=" + geoPoint +
-                ", timestamp='" + timestamp + '\'' +
-                ", user=" + user +
-                '}';
+    public void setLatitude(double latitude) {
+        Latitude = latitude;
     }
 }

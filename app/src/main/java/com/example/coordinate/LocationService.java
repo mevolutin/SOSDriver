@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -77,6 +78,7 @@ public class LocationService extends Service {
             if (locationResult != null && locationResult.getLastLocation() != null) {
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
+                LatLng latLng = new LatLng(latitude,longitude);
                 GeoPoint driver = new GeoPoint(latitude,longitude);
                 Log.d("LOCATION_UPDATE", String.valueOf(driver));
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -84,10 +86,24 @@ public class LocationService extends Service {
                 String userId = FirebaseAuth.getInstance().getUid();
                 UserId = userId;
 
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
+                FirebaseDatabase.getInstance().getReference("DriverAvailable").child(userId)
+                        .setValue(latLng).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(LocationService.this,"Location Saved",Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(LocationService.this,"Location not Saved",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                 DataFirebase();
-                GeoFire geoFire = new GeoFire(ref);
-                geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );
+
+
+
+
+                /*GeoFire geoFire = new GeoFire(ref);
+                geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );*/
 
 
 

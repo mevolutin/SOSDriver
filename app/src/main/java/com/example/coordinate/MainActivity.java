@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(userId);
-        ref1.removeValue();
+        //ref1.removeValue();
 
         //FirebaseAuth.getInstance().signOut(); LOGOUT
     }
