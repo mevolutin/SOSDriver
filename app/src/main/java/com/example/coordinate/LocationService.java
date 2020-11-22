@@ -56,7 +56,7 @@ import static android.content.ContentValues.TAG;
 
 public class LocationService extends Service {
 
-//ghfhgfhgfhjfg
+
     private FirebaseFirestore Db;
     private DocumentReference DRef;
     private static final String FIRE_LOG = "FireStoreEr";
@@ -90,46 +90,11 @@ public class LocationService extends Service {
                         .setValue(latLng).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(LocationService.this,"Location Saved",Toast.LENGTH_SHORT).show();
-                                }else{
-                                    Toast.makeText(LocationService.this,"Location not Saved",Toast.LENGTH_SHORT).show();
-                                }
+
                             }
                         });
+
                 DataFirebase();
-
-
-
-
-                /*GeoFire geoFire = new GeoFire(ref);
-                geoFire.setLocation(userId, new GeoLocation(locationResult.getLastLocation().getLatitude(),locationResult.getLastLocation().getLongitude()) );*/
-
-
-
-                // Read from the database
-                /*GeoFire mGeoFire = new GeoFire(ref);
-
-                mGeoFire.getLocation(userId, new com.firebase.geofire.LocationCallback() {
-                    @Override
-                    public void onLocationResult(String key, GeoLocation location) {
-                        if (location != null) {
-                            System.out.println(String.format("The location for key %s is [%f,%f]", key, location.latitude, location.longitude));
-                            Log.d("PINO", "onLocationResult: "+location);
-
-                        } else {
-                            System.out.println(String.format("There is no location for key %s in GeoFire", key));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        System.err.println("There was an error getting the GeoFire location: " + databaseError);
-                        Log.d("PINO", "onLocationResult: "+databaseError);
-
-
-                    }
-                });*/
 
 
             }

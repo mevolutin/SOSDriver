@@ -65,21 +65,55 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     DataFirebase();
                     startLocationService();
-
-
-
-
+                    setStateOn();
                 }
             } else {
-
                 stopLocationService();
-                onStop();
+                onStopSwitchOff();
+                setStateOff();
             }
         });
-        Button button = (Button) findViewById(R.id.LogOut);
-        button.setOnClickListener(v -> {
-            DataFirebase();
 
+
+    }
+
+    private void onStopSwitchOff() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId);
+    }
+
+
+    private void setStateOff() {
+        String state = "Non in Servizio";
+        FirebaseDatabase.getInstance().getReference("Driver").child(userId).child("Stato")
+                .setValue(state).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(MainActivity.this,"State Off",Toast.LENGTH_SHORT).show();
+                }else{
+
+                }
+            }
+        });
+
+
+    }
+
+    private void setStateOn() {
+        String state = "In Servizio";
+        FirebaseDatabase.getInstance().getReference("Driver").child(userId).child("Stato")
+                .setValue(state).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(MainActivity.this,"State On",Toast.LENGTH_SHORT).show();
+                }else{
+
+                }
+            }
         });
 
 
@@ -150,16 +184,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
-        DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("Driver");
-
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
-        //ref1.removeValue();
-
-        //FirebaseAuth.getInstance().signOut(); LOGOUT
+        FirebaseAuth.getInstance().signOut(); //LOGOUT
     }
 
     @Override
