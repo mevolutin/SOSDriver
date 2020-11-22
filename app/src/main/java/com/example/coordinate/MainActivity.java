@@ -184,6 +184,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriverAvailable");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId);
         FirebaseAuth.getInstance().signOut(); //LOGOUT
     }
 
